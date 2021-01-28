@@ -1,13 +1,9 @@
-from os.path import join
 import torch
 import os 
-import pandas as pd 
-import numpy as np
-from skimage import io, transform
+from skimage import io
 import random
-import matplotlib.pyplot as plt 
+from os.path import join, exists
 from torch.utils.data import Dataset, DataLoader
-from torchvision import transforms, utils
 
 
 class ParotideData(Dataset):
@@ -24,20 +20,22 @@ class ParotideData(Dataset):
         self.files_bord_glande = []
         self.files_autre = []
 
-        for ( _ , _ , filenames) in os.walk(self.root_dir+"/bord_glande"):
+        for ( _ , _ , filenames) in os.walk(join(self.root_dir,"bord_glande")):
             filenames = os.path.join(self.root_dir, "/bord_glande")
+            print("bonjour")
             self.files_glande.extend([filenames, 0]) #0 for bord 
         
-        for ( _ , _ , filenames) in os.walk(self.file_dir+"/glande"):
+        for ( _ , _ , filenames) in os.walk(self.root_dir+"/glande"):
             filenames = os.path.join(self.root_dir, "/glande", filenames)
             self.files_bord_glande.extend([filenames, 1]) # #1 for bord
 
-        for ( _ , _ , filenames) in os.walk(self.file_dir+"/tissu"):
+        for ( _ , _ , filenames) in os.walk(self.root_dir+"/tissu"):
             filenames = os.path.join(self.root_dir, "/tissu", filenames)
             self.files_autre.extend([filenames,2]) #2  du tissu
         
         self.files = self.files_glande + self.files_bord_glande + self.files_autre
-        self.files = random.shuffle(self.files)
+        print(self.files_glande)
+        random.shuffle(self.files)
     
     def __len__(self):
         """renvoi la taille du datasset"""
