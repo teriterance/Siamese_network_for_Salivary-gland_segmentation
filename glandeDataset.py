@@ -2,8 +2,9 @@ import torch
 import os 
 from skimage import io
 import random
-from os.path import join, exists
-from torch.utils.data import Dataset, DataLoader
+from os.path import join
+import matplotlib.pyplot as plt 
+from torch.utils.data import Dataset
 
 
 class ParotideData(Dataset):
@@ -20,21 +21,20 @@ class ParotideData(Dataset):
         self.files_bord_glande = []
         self.files_autre = []
 
-        for ( _ , _ , filenames) in os.walk(join(self.root_dir,"bord_glande")):
-            filenames = os.path.join(self.root_dir, "/bord_glande")
-            print("bonjour")
-            self.files_glande.extend([filenames, 0]) #0 for bord 
         
-        for ( _ , _ , filenames) in os.walk(self.root_dir+"/glande"):
-            filenames = os.path.join(self.root_dir, "/glande", filenames)
-            self.files_bord_glande.extend([filenames, 1]) # #1 for bord
+        for ( _ , _ , filenames) in os.walk(join(self.root_dir, "bord_glande/")):
+            for file in filenames:
+                self.files_bord_glande.append([join(self.root_dir, "bord_glande/", file), 0]) #0 for bord 
+        
+        for ( _ , _ , filenames) in os.walk(join(self.root_dir, "glande/")):
+            for file in filenames:
+                self.files_glande.append([join(self.root_dir, "glande/", file), 1]) # #1 for bord
 
-        for ( _ , _ , filenames) in os.walk(self.root_dir+"/tissu"):
-            filenames = os.path.join(self.root_dir, "/tissu", filenames)
-            self.files_autre.extend([filenames,2]) #2  du tissu
+        for ( _ , _ , filenames) in os.walk(join(self.root_dir, "tissu/")):
+            for file in filenames:
+                self.files_autre.append([join(self.root_dir, "tissu/", file),2]) #2  du tissu
         
         self.files = self.files_glande + self.files_bord_glande + self.files_autre
-        print(self.files_glande)
         random.shuffle(self.files)
     
     def __len__(self):
@@ -48,8 +48,9 @@ class ParotideData(Dataset):
         if torch.is_tensor(idx):
             idx = idx.tolist()
 
-        img_name = self.files[idx]
-        image = io.imread(img_name)
+        img_name = self.files[idx][0]
+        #print(img_name)
+        image = io.imread(img_name, as_gray=True)
         sample = {'image': image, 'cat': int(self.files[idx][1])}
 
         if self.transform:
@@ -57,22 +58,12 @@ class ParotideData(Dataset):
 
         return sample
 
-class ToTensor(object):
-    """Convert ndarrays in sample to Tensors."""
-
-    def __call__(self, sample):
-        image, cat = sample['image'], sample['cat']
-
-        # swap color axis because
-        # numpy image: H x W x C
-        # torch image: C X H X W
-        image = image.transpose((2, 0, 1))
-        return {'image': torch.from_numpy(image),
-                'cat': torch.tensor(cat)}
-
 
 if __name__ == "__main__":
-    gabinDataset  =  ParotideData(".")
+    gabinDataset  =  ParotideData()
     image = gabinDataset[0]
     print(image["image"].shape, image["cat"])
-    dataloader = DataLoader(gabinDataset, batch_size=4,shuffle=True, num_workers=4)
+    
+    plt.imshow(image['image'], cmap='gray')
+    plt.title(image['cat'])
+    plt.show()
