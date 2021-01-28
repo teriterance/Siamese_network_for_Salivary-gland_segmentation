@@ -1,4 +1,4 @@
-from os import read, walk, listdir, mkdir
+from os import listdir, mkdir
 from os.path import isfile, join, exists
 import numpy as np
 import matplotlib.pyplot as plt 
