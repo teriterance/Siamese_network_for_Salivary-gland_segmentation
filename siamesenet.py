@@ -37,8 +37,7 @@ class SiameseNet(nn.Module):
     def forward(self, x1, x2):
         out1 = self.forward_one(x1)
         out2 = self.forward_one(x2)
-        out = torch.abs(out1 - out2)
-        return out
+        return out1, out2
 
 if __name__ == '__main__':
     net = SiameseNet()
