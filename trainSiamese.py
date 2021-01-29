@@ -69,6 +69,8 @@ counter = []
 train_loss_history = [] 
 val_loss_history = [] 
 
+min_loss = np.inf
+
 for epoch in range(0,Config.train_number_epochs):
     train_loss = 0
     for data1, data2 in zip(train_dataloader, train_dataloader):
@@ -114,6 +116,10 @@ for epoch in range(0,Config.train_number_epochs):
     val_loss = val_loss/Config.test_batch_size
     val_loss_history.append(val_loss)
     print("Epoch number {}\n Current vall loss {}\n".format(epoch, val_loss))
+
+    if min_loss > val_loss:
+        min_loss = val_loss
+        torch.save(net.state_dict(), '../model')
     
 train_loss_history = np.array(train_loss_history)
 val_loss_history = np.array(val_loss_history)
