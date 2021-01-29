@@ -7,7 +7,7 @@ from torch.utils.data import Dataset
 
 
 class TextureTestDataset(Dataset):
-    def __init__(self, root_dir = "../data_texture_small/", status = "train", transforms = None):
+    def __init__(self, root_dir = "../data_texture_small/", status = "train", transforms = None, test_size = 0.3):
         """transformation a appliquer au dataset, et dossier de ce dernier 
         :root_dir =  dossier du dataset 
         :status = 
@@ -20,6 +20,12 @@ class TextureTestDataset(Dataset):
         
         for ( _ , _ , filenames) in os.walk(self.root_dir):
             self.files.extend(filenames)
+        
+        if status == 'test':
+            a = self.__len__()
+            a = int(a*test_size)
+            self.files = self.files[a:].copy()
+
         random.shuffle(self.files)
     
     def __len__(self):

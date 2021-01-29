@@ -8,7 +8,7 @@ from torch.utils.data import Dataset
 
 
 class ParotideData(Dataset):
-    def __init__(self, root_dir = "../data", status = "train", transforms = None):
+    def __init__(self, root_dir = "../data", status = "train", transforms = None, test_size=0.3):
         """transformation a appliquer au dataset, et dossier de ce dernier 
         :root_dir =  dossier du dataset 
         :status = 
@@ -36,6 +36,11 @@ class ParotideData(Dataset):
         
         self.files = self.files_glande + self.files_bord_glande + self.files_autre
         random.shuffle(self.files)
+        
+        if status == 'test':
+            a = self.__len__()
+            a = int(a*test_size)
+            self.files = self.files[a:].copy()
     
     def __len__(self):
         """renvoi la taille du datasset"""
