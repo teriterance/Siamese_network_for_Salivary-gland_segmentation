@@ -1,24 +1,11 @@
-import torchvision
-import torchvision.datasets as dset
-import torchvision.transforms as transforms
-from torch.utils.data import DataLoader,Dataset
+from torch.utils.data import DataLoader
 import matplotlib.pyplot as plt
-import torchvision.utils
 import numpy as np
-import random
-from PIL import Image
 import torch
-from torch.autograd import Variable
-import PIL.ImageOps    
-import torch.nn as nn
 from torch import optim
-import torch.nn.functional as F
 ###
-from cnnnet import CNNNet
 from contrastiveLoss import ContrastiveLoss
 from glandeDataset import ParotideData
-from proces_image import img_preprocessing
-from process_texture_test import explore_img, generate_dataset_big_image, generate_dataset_small_image
 from siamesenet import SiameseNet
 from textureDataset import TextureTestDataset
 import config as Config
