@@ -44,7 +44,7 @@ class TextureTestDataset(Dataset):
         sample = {'image': image, 'cat': int(self.files[idx].split("_")[0])}
 
         if self.transform:
-            sample = self.transform(sample)
+            sample = {'image': self.transform(image), 'cat': int(self.files[idx].split("_")[0])}
 
         return sample
 

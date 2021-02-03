@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import torch
 from torch import optim
+from torchvision import transforms
 ###
 from contrastiveLoss import ContrastiveLoss
 from glandeDataset import ParotideData
@@ -11,8 +12,14 @@ from textureDataset import TextureTestDataset
 import config as Config
 
 
-dataset_texture = TextureTestDataset()
-dataset_parotide = ParotideData()
+transform = transforms.Compose([
+    transforms.ToTensor(),
+    transforms.Normalize(mean=[0.485],
+                         std=[0.229])
+])
+
+dataset_texture = TextureTestDataset(transforms=transform)
+dataset_parotide = ParotideData(transforms=transform)
 
 train_dataloader_texture = DataLoader(dataset_texture,
                         shuffle=Config.shuffle,
@@ -61,8 +68,8 @@ min_loss = np.inf
 for epoch in range(0,Config.train_number_epochs):
     train_loss = 0
     for data1, data2 in zip(train_dataloader, train_dataloader):
-        img0, label0 = data1['image'].float().unsqueeze(1), data1['cat'] 
-        img1, label1 = data2['image'].float().unsqueeze(1), data2['cat']
+        img0, label0 = data1['image'].float(), data1['cat'] 
+        img1, label1 = data2['image'].float(), data2['cat']
         label = None
         if torch.all(label0.eq(label1)):
             label = torch.tensor(0)
@@ -85,8 +92,8 @@ for epoch in range(0,Config.train_number_epochs):
     
     val_loss = 0
     for data1, data2 in zip(train_dataloader_test, train_dataloader_test):
-        img0, label0 = data1['image'].float().unsqueeze(1), data1['cat'] 
-        img1, label1 = data2['image'].float().unsqueeze(1), data2['cat']
+        img0, label0 = data1['image'].float(), data1['cat'] 
+        img1, label1 = data2['image'].float(), data2['cat']
         label = None
         if torch.all(label0.eq(label1)):
             label = torch.tensor(0)
