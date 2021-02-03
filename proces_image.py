@@ -90,13 +90,22 @@ def img_preprocessing(BaseDatasetFolderPath = "../data_base/", customDatasetFold
                         if imagete != "N":
                             imagete = imagete.split()
                             glande_list.append([int(imagete[0]), int(imagete[1])])
+                    
+                    print("Rentrer les valeurs i et j de la non selection, format \"i j\" et \"N\" pour arreter")
+                    imagete = "oui"
+                    not_select = []
+                    while imagete != "N":
+                        imagete = input()
+                        if imagete != "N":
+                            imagete = imagete.split()
+                            not_select.append([int(imagete[0]), int(imagete[1])])
 
                     ############# enregistrement des images en question  #######
                     ## Le bord
-                    if exists(customDatasetFolderPath+str(imgsize)):
+                    if exists(customDatasetFolderPath):
                         pass
                     else:
-                        mkdir(customDatasetFolderPath+ str(imgsize))
+                        mkdir(customDatasetFolderPath)
                         mkdir(join(customDatasetFolderPath, "bord_glande"))
                         mkdir(join(customDatasetFolderPath, "glande"))
                         mkdir(join(customDatasetFolderPath, "tissu"))
@@ -108,9 +117,11 @@ def img_preprocessing(BaseDatasetFolderPath = "../data_base/", customDatasetFold
                                 cv2.imwrite(join(customDatasetFolderPath, "bord_glande/img"+str(bord_num)+".png"), tiles[i, j])
                                 bord_num = bord_num + 1
                             ## les glandes
-                            elif [i,j] in bord_glande_list:
+                            elif [i,j] in glande_list:
                                 cv2.imwrite(join(customDatasetFolderPath, "glande/img"+str(glande_num)+".png"), tiles[i, j])
                                 glande_num = glande_num + 1
+                            elif [i,j] in not_select:
+                                pass
                             else:
                                 cv2.imwrite(join(customDatasetFolderPath, "tissu/img"+str(tissu_num)+".png"), tiles[i, j])
                                 tissu_num = tissu_num + 1
