@@ -51,25 +51,20 @@ def merge_boundary(graph, src, dst):
     """
     pass
 
-img = cv2.imread("image_sortie.png")
-edges = filters.sobel(color.rgb2gray(img))
-labels = segmentation.slic(img, compactness=30, n_segments=400)
-g = graph.rag_boundary(labels, edges)
+def RAG( img):
+    edges = filters.sobel(color.rgb2gray(img))
+    labels = segmentation.slic(img, compactness=30, n_segments=400)
+    g = graph.rag_boundary(labels, edges)
 
-graph.show_rag(labels, g, img)
-plt.title('Initial RAG')
+    graph.show_rag(labels, g, img)
+    plt.title('Initial RAG')
 
-labels2 = graph.merge_hierarchical(labels, g, thresh=0.08, rag_copy=False,
-                                   in_place_merge=True,
-                                   merge_func=merge_boundary,
-                                   weight_func=weight_boundary)
+    labels2 = graph.merge_hierarchical(labels, g, thresh=0.08, rag_copy=False,
+                                    in_place_merge=True,
+                                    merge_func=merge_boundary,
+                                    weight_func=weight_boundary)
 
-graph.show_rag(labels, g, img)
-plt.title('RAG after hierarchical merging')
+    graph.show_rag(labels, g, img)
+    out = color.label2rgb(labels2, img, kind='avg', bg_label=0)
 
-plt.figure()
-out = color.label2rgb(labels2, img, kind='avg', bg_label=0)
-plt.imshow(out)
-plt.title('Final segmentation')
-
-plt.show()
+    return out

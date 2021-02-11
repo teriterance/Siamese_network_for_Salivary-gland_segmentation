@@ -7,6 +7,7 @@ from contrastiveLoss import ContrastiveLoss
 import time
 from torchvision import transforms
 import torch.nn as nn
+from RAG_algorithme import RAG
 
 
 def load_model(path='../model'):
@@ -41,7 +42,7 @@ if __name__ == '__main__':
     model = load_model()
     print(model)
 
-    img  = cv2.imread("/home/gabin/Cours/Article interessant/Recherche ali mansour/model/data_base/P01_kalimari/P01_D001_PAG_N_Echo.bmp", 0)
+    img  = cv2.imread("/home/gabin/Cours/Article interessant/Recherche ali mansour/model/test_texture/D1.tif", 0)
 
     img = img[65:353, 203:747].copy()
     start_time = time.time()
@@ -52,4 +53,8 @@ if __name__ == '__main__':
     plt.show()
     plt.imshow(img_out2)
     plt.show()
-    cv2.imwrite("image_sortie.png", img_out1)
+
+    out = RAG(img_out1)
+
+    plt.imshow(out)
+    plt.show()
