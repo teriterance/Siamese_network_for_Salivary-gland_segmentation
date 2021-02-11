@@ -29,21 +29,13 @@ def one_feature(image_ref_pad, model):
         for j in range(16, size_y - 16):
             imagette_1 = image_ref_pad[i-16:i+16, j-16:j+16].copy()
             imagette_1 = transform(imagette_1).unsqueeze(0)
-            out1, out2 = model.forward_one(imagette_1)
-            img_out_1[i,j] = out1.detach().numpy() 
-            img_out_2[i,j] = out2.detach().numpy()
+            out1 = model.forward_one(imagette_1)
+            out1 = out1.detach().numpy()
+            img_out_1[i,j] = out1[0][0]
+            img_out_2[i,j] = out1[0][1]
 
     return img_out_1, img_out_2
 
-"""
-def gen_feature_vector(img ,model, im_size = 32):
-    list_images = []
-    for r in range(0,img.shape[0],im_size):
-        for c in range(0,img.shape[1],im_size):
-            list_images.append(img[r:r+im_size, c:c+im_size,:])
-    
-    for i in range 
-"""
 
 if __name__ == '__main__':
     model = load_model()
@@ -53,8 +45,11 @@ if __name__ == '__main__':
 
     img = img[65:353, 203:747].copy()
     start_time = time.time()
-    img_out = one_feature(img, model)
+    img_out1, img_out2 = one_feature(img, model)
     print("--- %s seconds ---" % (time.time() - start_time))
 
-    plt.imshow(img_out)
+    plt.imshow(img_out1)
     plt.show()
+    plt.imshow(img_out2)
+    plt.show()
+    cv2.imwrite("image_sortie.png", img_out1)
