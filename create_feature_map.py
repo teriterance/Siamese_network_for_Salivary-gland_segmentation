@@ -6,6 +6,7 @@ from siamesenet import SiameseNet
 from contrastiveLoss import ContrastiveLoss
 import time
 from torchvision import transforms
+import torch.nn as nn
 
 
 def load_model(path='../model'):
@@ -27,22 +28,12 @@ def one_feature(image_ref_pad, model):
     for i in range(16, size_x - 16):
         for j in range(16, size_y - 16):
             imagette_1 = image_ref_pad[i-16:i+16, j-16:j+16].copy()
-            imagette_2 = image_ref_pad[i+1-16:i+1+16, j+1-16:j+1+16].copy()
             imagette_1 = transform(imagette_1).unsqueeze(0)
-            imagette_2 = transform(imagette_2).unsqueeze(0)
-            out1, out2 = model(imagette_1, imagette_2)
-            img_out_1[i,j] = sum(((out1.detach().numpy() - out2.detach().numpy())**2).reshape(2))
-            
-    for j in range(16, size_y - 16):
-        for i in range(16, size_x - 16):
-            imagette_1 = image_ref_pad[i-16:i+16, j-16:j+16].copy()
-            imagette_2 = image_ref_pad[i+1-16:i+1+16, j+1-16:j+1+16].copy()
-            imagette_1 = transform(imagette_1).unsqueeze(0)
-            imagette_2 = transform(imagette_2).unsqueeze(0)
-            out1, out2 = model(imagette_1, imagette_2)
-            img_out_2[i,j] = sum(((out1.detach().numpy() - out2.detach().numpy())**2).reshape(2))
+            out1, out2 = model.forward_one(imagette_1)
+            img_out_1[i,j] = out1.detach().numpy() 
+            img_out_2[i,j] = out2.detach().numpy()
 
-    return img_out_1 + img_out_2
+    return img_out_1, img_out_2
 
 """
 def gen_feature_vector(img ,model, im_size = 32):
@@ -56,9 +47,10 @@ def gen_feature_vector(img ,model, im_size = 32):
 
 if __name__ == '__main__':
     model = load_model()
+    print(model)
+
     img  = cv2.imread("/home/gabin/Cours/Article interessant/Recherche ali mansour/model/data_base/P01_kalimari/P01_D001_PAG_N_Echo.bmp", 0)
-    #plt.imshow(img)
-    #plt.show()
+
     img = img[65:353, 203:747].copy()
     start_time = time.time()
     img_out = one_feature(img, model)
