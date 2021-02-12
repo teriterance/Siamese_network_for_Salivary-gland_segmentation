@@ -1,3 +1,7 @@
+#######################################
+### Autor: teriterance(Gabin FODOP)####
+#######################################
+
 from torch.utils.data import DataLoader
 import matplotlib.pyplot as plt
 import numpy as np

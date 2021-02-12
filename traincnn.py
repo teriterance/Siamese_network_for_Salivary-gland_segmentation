@@ -1,10 +1,12 @@
+#######################################
+### Autor: teriterance(Gabin FODOP)####
+#######################################
+
 from torch.utils.data import DataLoader
 import matplotlib.pyplot as plt
 import numpy as np
 import torch
 from torch import optim
-###
-from contrastiveLoss import ContrastiveLoss
 from glandeDataset import ParotideData
 from cnnnet import CNNNet
 from textureDataset import TextureTestDataset

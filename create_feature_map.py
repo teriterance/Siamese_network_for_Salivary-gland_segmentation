@@ -18,7 +18,7 @@ def load_model(path='../model'):
 
     return model
 
-def one_feature(image_ref_pad, model):
+def features(image_ref_pad, model):
     [size_x, size_y] = image_ref_pad.shape
     print("The chape of input image",size_x, size_y)
     
@@ -45,17 +45,21 @@ if __name__ == '__main__':
     model = load_model()
     print("The loaded model is: \n",model)
 
-    for arg in sys.argv:
+    for arg in sys.argv[1:]:
+        print(arg)
         img  = cv2.imread(arg, 0)
         img = img[65:353, 203:747].copy()
         
         start_time = time.time()
         print("Timer start")
-        img_out1, img_out2 = one_feature(img, model)
+        img_out1, img_out2 = features(img, model)
         print("--- %s seconds ---" % (time.time() - start_time))
 
-        f, axarr = plt.subplot(3, 1)
+        f, axarr = plt.subplots(3, 1)
         axarr[0].imshow(img, cmap='gray')
+        axarr[0].title.set_text("original image")
         axarr[1].imshow(img_out1, cmap='gray')
+        axarr[1].title.set_text("first feature image")
         axarr[2].imshow(img_out2, cmap='gray')
+        axarr[2].title.set_text("second feature image")
         plt.show()

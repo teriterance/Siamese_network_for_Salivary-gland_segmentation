@@ -1,3 +1,7 @@
+#######################################
+### Autor: teriterance(Gabin FODOP)####
+#######################################
+
 from os import listdir, mkdir
 from os.path import isfile, join, exists
 import numpy as np

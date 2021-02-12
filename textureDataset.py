@@ -1,3 +1,7 @@
+#######################################
+### Autor: teriterance(Gabin FODOP)####
+#######################################
+
 import torch
 import os 
 from skimage import io

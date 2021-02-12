@@ -1,3 +1,7 @@
+#######################################
+### Autor: teriterance(Gabin FODOP)####
+#######################################
+
 import torch
 import os 
 from skimage import io
@@ -54,7 +58,7 @@ class ParotideData(Dataset):
             idx = idx.tolist()
 
         img_name = self.files[idx][0]
-        #print(img_name)
+        
         image = io.imread(img_name, as_gray=True)
         sample = {'image': image, 'cat': int(self.files[idx][1])}
 
