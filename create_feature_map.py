@@ -1,24 +1,27 @@
+#######################################
+### Autor: teriterance(Gabin FODOP)####
+#######################################
+
 import torch
 import cv2
-import matplotlib.pyplot as plt
-import numpy as np
 from siamesenet import SiameseNet
-from contrastiveLoss import ContrastiveLoss
-import time
 from torchvision import transforms
-import torch.nn as nn
-from RAG_algorithme import RAG
-
+import matplotlib.pyplot as plt
+import time
+import sys
 
 def load_model(path='../model'):
+    """This function load saved model for generate features map"""
     model = SiameseNet()
     model.load_state_dict(torch.load(path))
     model.eval()
+
     return model
 
 def one_feature(image_ref_pad, model):
-    print(image_ref_pad.shape)
     [size_x, size_y] = image_ref_pad.shape
+    print("The chape of input image",size_x, size_y)
+    
     img_out_1 = image_ref_pad * 0
     img_out_2 = image_ref_pad * 0
     transform = transforms.Compose([
@@ -40,21 +43,19 @@ def one_feature(image_ref_pad, model):
 
 if __name__ == '__main__':
     model = load_model()
-    print(model)
+    print("The loaded model is: \n",model)
 
-    img  = cv2.imread("/home/gabin/Cours/Article interessant/Recherche ali mansour/model/test_texture/D1.tif", 0)
+    for arg in sys.argv:
+        img  = cv2.imread(arg, 0)
+        img = img[65:353, 203:747].copy()
+        
+        start_time = time.time()
+        print("Timer start")
+        img_out1, img_out2 = one_feature(img, model)
+        print("--- %s seconds ---" % (time.time() - start_time))
 
-    img = img[65:353, 203:747].copy()
-    start_time = time.time()
-    img_out1, img_out2 = one_feature(img, model)
-    print("--- %s seconds ---" % (time.time() - start_time))
-
-    plt.imshow(img_out1)
-    plt.show()
-    plt.imshow(img_out2)
-    plt.show()
-
-    out = RAG(img_out1)
-
-    plt.imshow(out)
-    plt.show()
+        f, axarr = plt.subplot(3, 1)
+        axarr[0].imshow(img, cmap='gray')
+        axarr[1].imshow(img_out1, cmap='gray')
+        axarr[2].imshow(img_out2, cmap='gray')
+        plt.show()

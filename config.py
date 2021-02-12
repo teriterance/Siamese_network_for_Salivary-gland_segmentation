@@ -1,3 +1,9 @@
+#######################################
+### Autor: teriterance(Gabin FODOP)####
+#######################################
+
+"""this is the configuration for train and use network"""
+
 train_batch_size = 16
 num_workers = 8
 shuffle = True

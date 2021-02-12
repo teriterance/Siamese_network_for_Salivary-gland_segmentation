@@ -52,7 +52,8 @@ def merge_boundary(graph, src, dst):
     pass
 
 def RAG( img):
-    edges = filters.sobel(color.rgb2gray(img))
+    print(img.shape)
+    edges = filters.sobel(img)
     labels = segmentation.slic(img, compactness=30, n_segments=400)
     g = graph.rag_boundary(labels, edges)
 

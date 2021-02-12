@@ -1,3 +1,7 @@
+#######################################
+### Autor: teriterance(Gabin FODOP)####
+#######################################
+
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -21,4 +25,10 @@ class ContrastiveLoss(nn.Module):
         return loss_contrastive
     
 if __name__ =="__main__":
-    pass
+    """Test contrastiveloss function"""
+    loss = ContrastiveLoss()
+    val1 = torch.tensor([[1., -1.], [1., -1.]])
+    val2 = torch.tensor([[1., -1.], [1., -1.]])
+    lab = torch.tensor(1)
+    out = loss(val1, val2, lab)
+    print("test output", out)
