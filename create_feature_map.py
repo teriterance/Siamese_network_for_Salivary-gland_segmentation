@@ -6,7 +6,9 @@ import torch
 import cv2
 from siamesenet import SiameseNet
 from torchvision import transforms
+from sklearn.decomposition import PCA
 import matplotlib.pyplot as plt
+import numpy as np
 import time
 import sys
 
@@ -63,3 +65,17 @@ if __name__ == '__main__':
         axarr[2].imshow(img_out2, cmap='gray')
         axarr[2].title.set_text("second feature image")
         plt.show()
+        edged=cv2.Canny(img_out1,30,200)
+        plt.imshow(edged)
+        plt.show()
+        _, contours, hierarchy=cv2.findContours(edged,cv2.RETR_EXTERNAL,cv2.CHAIN_APPROX_NONE)
+        plt.imshow(edged)
+        plt.show()
+        plt.imshow(img_out1+img_out2)
+        plt.show()
+
+        X = np.array([img_out1, img_out2])
+        pca = PCA(n_components=2)
+        pca.fit(X)
+        print(pca.explained_variance_ratio_)
+
