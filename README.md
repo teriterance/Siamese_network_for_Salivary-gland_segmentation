@@ -59,4 +59,5 @@ this code is inspired by:
 * texture segmentation using siamese network and hierarchical region merging, Ryusuke YamadaHidenori IdeHidenori IdeNovanto YudistiraNovanto YudistiraTakio KuritaTakio Kurita
 * Region-Focus Training: Boosting Accuracy for Deep-Learning Image Segmentation, Chanok PathompataiRatchadaporn KanawongPinyo TaeprasartsitPinyo Taeprasartsit
 * Siamese networks
+* An Efficient Agglomerative Clustering Algorithm for Region Growing
 * etc
