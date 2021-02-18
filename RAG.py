@@ -120,7 +120,15 @@ class Adjency:
                 self.graph[a] = [a[0]+1, a[1]]
                 self.graph[a] = [a[0], a[1]-1]
                 self.graph[a] = [a[0], a[1]+1]
-        
+    
+    def disimilarity_criterion(self):
+        """"""
+        pass
+    
+
+    def disimilarity_criterion_ward_method(self):
+        """"""
+        pass
 
 
 
