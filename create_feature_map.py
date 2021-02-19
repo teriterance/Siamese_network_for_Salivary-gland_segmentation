@@ -7,11 +7,14 @@ import cv2
 from siamesenet import SiameseNet
 from torchvision import transforms
 from sklearn.decomposition import PCA
-from RAG import RAG
+#from RAG import RAG
 import matplotlib.pyplot as plt
 import numpy as np
 import time
 import sys
+import scipy.cluster.hierarchy as sch
+from sklearn.cluster import AgglomerativeClustering
+from sklearn.cluster import KMeans
 
 def load_model(path='../model'):
     """This function load saved model for generate features map"""
@@ -44,6 +47,28 @@ def features(image_ref_pad, model):
     return img_out_1, img_out_2
 
 
+def clustering(img, feature_1, feature_2):
+    im_shape = img.shape
+    print(im_shape)
+    #linearisation des image
+    X = np.array(list(zip(feature_1.flatten(), feature_2.flatten())))
+    print(X.shape)
+    #dendrogram = sch.dendrogram(sch.linkage(X[0:20000], method='ward'))
+    #hc = AgglomerativeClustering(n_clusters=4, affinity='euclidean', linkage='ward')
+    #y_hc = hc.fit_predict(X[0:20000])
+    #print(y_hc)
+    #print(y_hc.shape)
+    kmeans = KMeans(n_clusters=4)
+    y_km = kmeans.fit_predict(X)
+    print(y_km)
+    print(im_shape)
+    img_clust = np.reshape(y_km, im_shape)
+    plt.imshow(img_clust)
+    plt.show()
+
+
+
+
 if __name__ == '__main__':
     model = load_model()
     print("The loaded model is: \n",model)
@@ -67,4 +92,4 @@ if __name__ == '__main__':
         axarr[2].title.set_text("second feature image")
         plt.show()
 
-        RAG(np.array([img_out1,img_out2]))
+        clustering(img, img_out1, img_out2)
