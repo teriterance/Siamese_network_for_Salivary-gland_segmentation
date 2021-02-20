@@ -46,8 +46,7 @@ def features(image_ref_pad, model):
 
     return img_out_1, img_out_2
 
-
-def clustering(img, feature_1, feature_2):
+def clustering_KNN(img, feature_1, feature_2):
     im_shape = img.shape
     print(im_shape)
     #linearisation des image
@@ -58,7 +57,26 @@ def clustering(img, feature_1, feature_2):
     #y_hc = hc.fit_predict(X[0:20000])
     #print(y_hc)
     #print(y_hc.shape)
-    kmeans = KMeans(n_clusters=4)
+    kmeans = KMeans(n_clusters=7)
+    y_km = kmeans.fit_predict(X)
+    print(y_km)
+    print(im_shape)
+    img_clust = np.reshape(y_km, im_shape)
+    plt.imshow(img_clust)
+    plt.show()
+
+def clustering_KNN(img, feature_1, feature_2):
+    im_shape = img.shape
+    print(im_shape)
+    #linearisation des image
+    X = np.array(list(zip(feature_1.flatten(), feature_2.flatten())))
+    print(X.shape)
+    #dendrogram = sch.dendrogram(sch.linkage(X[0:20000], method='ward'))
+    #hc = AgglomerativeClustering(n_clusters=4, affinity='euclidean', linkage='ward')
+    #y_hc = hc.fit_predict(X[0:20000])
+    #print(y_hc)
+    #print(y_hc.shape)
+    kmeans = KMeans(n_clusters=7)
     y_km = kmeans.fit_predict(X)
     print(y_km)
     print(im_shape)
@@ -92,4 +110,4 @@ if __name__ == '__main__':
         axarr[2].title.set_text("second feature image")
         plt.show()
 
-        clustering(img, img_out1, img_out2)
+        clustering_KNN(img, img_out1, img_out2)

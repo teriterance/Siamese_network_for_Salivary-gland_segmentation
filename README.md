@@ -29,11 +29,13 @@ Run the proces_image.py to create a database
 Run the process_texture_test.py to grate the texture database
 Run create_feature_map.py 
 you canget for th next image
-![original image](./image/D1.tif)
+![original image](./image/D1.bmp)
 the feature 1 file will be like 
-![image feature 1](./image/Figure_maillage_feature1.png)
+![image feature 1](./image/Figure_glande_feature1.png)
 the feature 2 file will be like 
-![image feature 1](./image/Figure_maillage_feature2.png)
+![image feature 1](./image/Figure_glande_feature2.png)
+And clustering with KNN and 4 class
+![image feature 1](./image/Figure_glande_cluster.png)
 
 ### And coding style tests
 
