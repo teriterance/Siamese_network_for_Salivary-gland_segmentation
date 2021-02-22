@@ -1,4 +1,4 @@
-# parotide
+# Siamese_network_for_Salivary-gland_segmentation
 This project present a method for segementation of images. in this repository we apply our method to 
 biomedical image.
 
