@@ -13,8 +13,7 @@ import numpy as np
 import time
 import sys
 import scipy.cluster.hierarchy as sch
-from sklearn.cluster import AgglomerativeClustering
-from sklearn.cluster import KMeans
+from clustering import hieracjiclaClustering
 
 def load_model(path='../model'):
     """This function load saved model for generate features map"""
@@ -46,45 +45,6 @@ def features(image_ref_pad, model):
 
     return img_out_1, img_out_2
 
-def clustering_KNN(img, feature_1, feature_2):
-    im_shape = img.shape
-    print(im_shape)
-    #linearisation des image
-    X = np.array(list(zip(feature_1.flatten(), feature_2.flatten())))
-    print(X.shape)
-    #dendrogram = sch.dendrogram(sch.linkage(X[0:20000], method='ward'))
-    #hc = AgglomerativeClustering(n_clusters=4, affinity='euclidean', linkage='ward')
-    #y_hc = hc.fit_predict(X[0:20000])
-    #print(y_hc)
-    #print(y_hc.shape)
-    kmeans = KMeans(n_clusters=7)
-    y_km = kmeans.fit_predict(X)
-    print(y_km)
-    print(im_shape)
-    img_clust = np.reshape(y_km, im_shape)
-    plt.imshow(img_clust)
-    plt.show()
-
-def clustering_KNN(img, feature_1, feature_2):
-    im_shape = img.shape
-    print(im_shape)
-    #linearisation des image
-    X = np.array(list(zip(feature_1.flatten(), feature_2.flatten())))
-    print(X.shape)
-    #dendrogram = sch.dendrogram(sch.linkage(X[0:20000], method='ward'))
-    #hc = AgglomerativeClustering(n_clusters=4, affinity='euclidean', linkage='ward')
-    #y_hc = hc.fit_predict(X[0:20000])
-    #print(y_hc)
-    #print(y_hc.shape)
-    kmeans = KMeans(n_clusters=7)
-    y_km = kmeans.fit_predict(X)
-    print(y_km)
-    print(im_shape)
-    img_clust = np.reshape(y_km, im_shape)
-    plt.imshow(img_clust)
-    plt.show()
-
-
 
 
 if __name__ == '__main__':
@@ -95,6 +55,8 @@ if __name__ == '__main__':
         print(arg)
         img  = cv2.imread(arg, 0)
         img = img[65:353, 203:747].copy()
+
+        img = cv2.equalizeHist(img)
         
         start_time = time.time()
         print("Timer start")
@@ -110,4 +72,4 @@ if __name__ == '__main__':
         axarr[2].title.set_text("second feature image")
         plt.show()
 
-        clustering_KNN(img, img_out1, img_out2)
+        hieracjiclaClustering(img, img_out1, img_out2)
