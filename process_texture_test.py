@@ -27,7 +27,7 @@ def generate_dataset_big_image(BaseDatasetFolderPath = "../Normalized_Brodatz/",
     
     for texture in listdir(BaseDatasetFolderPath):
         if counter < imax:
-            img_boat[counter] = cv2.imread(BaseDatasetFolderPath + texture)
+            img_boat[counter] = cv2.imread(BaseDatasetFolderPath + texture, 0)
             counter = counter+1
         else:
             for i in range(4):
@@ -54,7 +54,7 @@ def generate_dataset_small_image(BaseDatasetFolderPath = "../Normalized_Brodatz/
         mkdir(customDatasetFolderPath)
     
     for texture in listdir(BaseDatasetFolderPath):
-        img = cv2.imread(BaseDatasetFolderPath + texture)
+        img = cv2.imread(BaseDatasetFolderPath + texture, 0)
         for r in range(0,img.shape[0],im_size):
             for c in range(0,img.shape[1],im_size):
                 cv2.imwrite(join(customDatasetFolderPath,f"{int(texture[1:].split('.')[0])}_img{r}_{c}.png"),img[r:r+im_size, c:c+im_size,:])

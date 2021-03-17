@@ -1,158 +1,73 @@
-import numpy as np
-import matplotlib.pyplot as plt
-
-class Heap:
-
-    def __init__(self):
-        """Create Heap data Structure Class"""
-        self.Heap = []
-        self.Pair = []
-        self.Where = []
-
-    def __str__(self) -> str:
-        return "Heap: "+str(self.Heap) + "\nPair: " + str(self.Pair) + "\nWhere: " +str(self.Where)
-    
-    def construct(self, H, E, Where, Pair):
-        """Construct class Heap"""
-        s, e = int(E/2), E
-        self.Where = Where.copy()
-        self.Pair = Pair.copy()
-        self.Heap = H.copy()
-        while s > 1:
-            s = s - 1 
-            self.shiftdown(s, e)
-        return self.Heap
-
-    def shiftdown(self, s, e):
-        """Shiftdown configuration"""
-        i = s
-        j = 2*i
-
-        x, p = self.Heap[i], self.Pair[i]
-        while j <= e:
-            if j < e :
-                if self.Heap[j] > self.Heap[j+1]:
-                    j = j + 1
-            if x <= self.Heap[j]:
-                break
-            self.Heap[i] = self.Heap[j]
-            pp = self.Pair[j]
-            self.Pair[i] = pp
-            self.Where[pp] = i
-            i, j = j, 2*i
-
-        self.Heap[i], self.Where[p], self.Pair[i] = x, i, p
-
-    def shiftup(self, s):
-        """shiftup configuration"""
-        i = s
-        j = int(i/2)
-
-        x, p = self.Heap[i], self.Pair[i]
-        while j >= 1:
-            if self.Heap[j] <= x:
-                break
-            self.Heap[i] = self.Heap[j]
-            pp = self.Pair[j]
-            self.Pair[i] = pp
-            self.Where[pp] = i
-            i = j
-            j = int(i/2)
-        self.Heap[i], self.Where[p], self.Pair[i] = x, i, p
-
-    def update(self, x, s, e):
-        """Update function"""
-        if x > self.Heap[s]:
-            self.Heap[s] = x
-            self.shiftdown(s, e)
-        elif x < self.Heap[s]:
-            self.Heap[s] = x
-            self.shiftup(s)
-    
-    def remove(self, x, s, e):
-        """Remove function"""
-        x = self.Heap[s]
-        self.Heap[s] = self.Heap[e]
-        
-        p = self.Pair[e]
-        self.Pair[s] = p
-        self.Where[p] = s
-
-        if x < self.Heap[e]:
-            self.shiftdown(s, e-1)
-        elif x > self.Heap[e]:
-            self.shiftup(s)
-
-    def _empty(self):
-        """clear the list"""
-        self.Heap = []
-        self.Pair = []
-        self.Where = []
-
-class Adjency:
-    """"""
-    def __init__(self, im_shape,im_feature_1, im_feature_2):
-        ## chaque pixel va constituer une region
-        self.region_list = []
-        for i in range(im_shape[0]):
-            for j in range(im_shape[1]):
-                self.region_list.append([i,j])
-        ##construction du graphe
-        self.graph = {}
-        for a in range(len(self.region_list)):
-
-            if a[0] < 1:
-                self.graph[a] = [a[0]+1, a[1]]
-                if a[1] < 1: 
-                    self.graph[a] = [a[0], a[1]+1]
-                elif a[1] + 1 > im_shape[1]:
-                    self.graph[a] = [a[0], a[1]-1]
-
-            elif a[0] + 1 > im_shape[0]:
-                self.graph[a] = [a[0]-1, a[1]]
-                if a[1] < 1: 
-                    self.graph[a] = [a[0], a[1]+1]
-                elif a[1] + 1 > im_shape[1]:
-                    self.graph[a] = [a[0], a[1]-1]
-
-            elif a[0] > 1 and a[0] < im_shape[0] -1 and a[1] > 1 and a[1] < im_shape[1] - 1:
-                self.graph[a] = [a[0]-1, a[1]]
-                self.graph[a] = [a[0]+1, a[1]]
-                self.graph[a] = [a[0], a[1]-1]
-                self.graph[a] = [a[0], a[1]+1]
-    
-    def disimilarity_criterion(self):
-        """"""
-        pass
-    
-
-    def disimilarity_criterion_ward_method(self):
-        """"""
-        pass
+from skimage import data, segmentation, filters, color
+from skimage.future import graph
+from matplotlib import pyplot as plt
 
 
+def weight_boundary(graph, src, dst, n):
+    """
+    Handle merging of nodes of a region boundary region adjacency graph.
 
-def RAG_val(img):
-    """RAG function"""
+    This function computes the `"weight"` and the count `"count"`
+    attributes of the edge between `n` and the node formed after
+    merging `src` and `dst`.
 
-    #Initialization
-    #each pixel is region
 
+    Parameters
+    ----------
+    graph : RAG
+        The graph under consideration.
+    src, dst : int
+        The vertices in `graph` to be merged.
+    n : int
+        A neighbor of `src` or `dst` or both.
+
+    Returns
+    -------
+    data : dict
+        A dictionary with the "weight" and "count" attributes to be
+        assigned for the merged node.
+
+    """
+    default = {'weight': 0.0, 'count': 0}
+
+    count_src = graph[src].get(n, default)['count']
+    count_dst = graph[dst].get(n, default)['count']
+
+    weight_src = graph[src].get(n, default)['weight']
+    weight_dst = graph[dst].get(n, default)['weight']
+
+    count = count_src + count_dst
+    return {
+        'count': count,
+        'weight': (count_src * weight_src + count_dst * weight_dst)/count
+    }
+
+
+def merge_boundary(graph, src, dst):
+    """Call back called before merging 2 nodes.
+
+    In this case we don't need to do any computation here.
+    """
     pass
 
-if __name__ == "__main__":
-    h = Heap()
-    print(h)
-    print("\n")
-    H = [1, 2, 3, 4]
-    P = [1, 2, 0, 3]#, [1,3]]
-    W = [1,0,2, 4]
-    h.construct(H, 4, W, P)
-    print(h)
-    print("\n")
-    h.update(2, 3, 3)
-    print(h)
-    print("\n")
-    h.remove(2, 3, 3)
-    print(h)
-    print("\n")
+def RAG_Kurita_advice(img):
+    labels = segmentation.slic(img, compactness=30, n_segments=img.shape[0]*img.shape[1], start_label=1)
+    g = graph.rag_boundary(labels, edges)
+
+graph.show_rag(labels, g, img)
+plt.title('Initial RAG')
+
+labels2 = graph.merge_hierarchical(labels, g, thresh=0.08, rag_copy=False,
+                                   in_place_merge=True,
+                                   merge_func=merge_boundary,
+                                   weight_func=weight_boundary)
+
+graph.show_rag(labels, g, img)
+plt.title('RAG after hierarchical merging')
+
+plt.figure()
+out = color.label2rgb(labels2, img, kind='avg', bg_label=0)
+plt.imshow(out)
+plt.title('Final segmentation')
+
+plt.show()

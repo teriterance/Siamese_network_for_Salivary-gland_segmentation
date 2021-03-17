@@ -37,7 +37,7 @@ def img_preprocessing(BaseDatasetFolderPath = "../data_base/", customDatasetFold
                 if not (".bmp" in fileName or ".jpg" in fileName and "_seg" not in fileName):
                     pass
                 elif (".bmp" in fileName or ".jpg" in fileName) and "_seg" not in fileName and "_Elas" not in fileName :
-                    img  = cv2.imread(join(BaseDatasetFolderPath, patient, fileName))
+                    img  = cv2.imread(join(BaseDatasetFolderPath, patient, fileName), 0)
                     bord_num = 0
                     glande_num = 0
                     tissu_num = 0
@@ -48,7 +48,7 @@ def img_preprocessing(BaseDatasetFolderPath = "../data_base/", customDatasetFold
                     else :
                         fileName2 = fileName.split('.')[0] + "_seg." + fileName.split('.')[1]
                     
-                    img_seg = cv2.imread(join(BaseDatasetFolderPath, patient, fileName2))
+                    img_seg = cv2.imread(join(BaseDatasetFolderPath, patient, fileName2), 0)
                     print(join(BaseDatasetFolderPath, patient, fileName2))
 
                     ##### Process image #####

@@ -36,6 +36,7 @@ def features(image_ref_pad, model):
                          
     for i in range(16, size_x - 16):
         for j in range(16, size_y - 16):
+            
             imagette_1 = image_ref_pad[i-16:i+16, j-16:j+16].copy()
             imagette_1 = transform(imagette_1).unsqueeze(0)
             out1 = model.forward_one(imagette_1)
