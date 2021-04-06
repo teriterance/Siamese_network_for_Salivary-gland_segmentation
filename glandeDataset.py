@@ -25,7 +25,6 @@ class ParotideData(Dataset):
         self.files_bord_glande = []
         self.files_autre = []
 
-        
         for ( _ , _ , filenames) in os.walk(join(self.root_dir, "bord_glande/")):
             for file in filenames:
                 self.files_bord_glande.append([join(self.root_dir, "bord_glande/", file), 0]) #0 for bord 
@@ -63,7 +62,7 @@ class ParotideData(Dataset):
         sample = {'image': image, 'cat': int(self.files[idx][1])}
 
         if self.transform:
-            sample = {'image': self.transform(image), 'cat': int(self.files[idx].split("_")[0])}
+            sample = {'image': self.transform(image), 'cat': int(self.files[idx][1])}
 
         return sample
 

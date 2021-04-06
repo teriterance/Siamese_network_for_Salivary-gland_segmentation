@@ -29,7 +29,7 @@ def clustering_KNN(img, feature_1, feature_2):
     #y_hc = hc.fit_predict(X[0:20000])
     #print(y_hc)
     #print(y_hc.shape)
-    kmeans = KMeans(n_clusters=7)
+    kmeans = KMeans(n_clusters=6)
     y_km = kmeans.fit_predict(X)
     print(y_km)
     img_clust = np.reshape(y_km, im_shape)

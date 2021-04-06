@@ -10,7 +10,7 @@ import cv2
 
 
 def get_tile_images(image, width=32, height=32):
-    _nrows, _ncols, depth = image.shape
+    _nrows, _ncols = image.shape
     _size = image.size
     _strides = image.strides
 
@@ -22,7 +22,7 @@ def get_tile_images(image, width=32, height=32):
 
     return np.lib.stride_tricks.as_strided(
         np.ravel(image),
-        shape=(nrows, ncols, height, width, depth),
+        shape=(nrows, ncols, height, width),
         strides=(height * _strides[0], width * _strides[1], *_strides),
         writeable=False
     )
