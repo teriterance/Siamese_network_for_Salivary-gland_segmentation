@@ -71,7 +71,9 @@ def img_preprocessing(BaseDatasetFolderPath = "../data_base/", customDatasetFold
                     print("Timer start")
                     img_out1, img_out2 = features(img, model)
                     print("--- %s seconds ---" % (time.time() - start_time))
-
+                    img_concate_Verti=np.concatenate((img_out1,img_out2),axis=0)
+                    cv2.imwrite("./output/"+patient+fileName+".png",img_concate_Verti)
+"""
                     f, axarr = plt.subplots(3, 1)
                     axarr[0].imshow(img)
                     axarr[0].title.set_text("original image")
@@ -81,7 +83,7 @@ def img_preprocessing(BaseDatasetFolderPath = "../data_base/", customDatasetFold
                     axarr[2].title.set_text("second feature image")
                     plt.show()
                     clustering_KNN(img, img_out1, img_out2)
-
+"""
 
 def tainingTest():
     model = load_model()
