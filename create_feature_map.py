@@ -63,27 +63,44 @@ def img_preprocessing(BaseDatasetFolderPath = "../data_base/", customDatasetFold
                 if not (".bmp" in fileName or ".jpg" in fileName and "_seg" not in fileName):
                     pass
                 elif (".bmp" in fileName or ".jpg" in fileName) and "_seg" not in fileName and "_Elas" not in fileName :
+
+                    fileName2 = None
+                    if "_val." in fileName:
+                        fileName2 = fileName.replace("_val.","_seg.")
+                    else :
+                        fileName2 = fileName.split('.')[0] + "_seg." + fileName.split('.')[1]
+                    img_seg = cv2.imread(join(BaseDatasetFolderPath, patient, fileName2), 0)
+
+                    img_seg = ~img_seg
+                    img_seg = (~(img_seg <= 15)*255).astype(np.uint8)
+                    img_seg = ~img_seg#.astype(np.uint8)
+                    """#img_seg = abs(img_seg - 255)
+                    plt.hist(img_seg.ravel(),256,[0,256]); 
+                    plt.show()
+                    cv2.imshow("qdfqs", img_seg)
+                    cv2.waitKey()"""
+                    img_seg = img_seg[65:353, 203:747].copy()
+
                     print(BaseDatasetFolderPath+patient+'/'+fileName)
                     img  = cv2.imread(BaseDatasetFolderPath+patient+'/'+fileName, 0)
+                    ff = fileName.split('.')
                     img = img[65:353, 203:747].copy()
                     
                     start_time = time.time()
                     print("Timer start")
                     img_out1, img_out2 = features(img, model)
                     print("--- %s seconds ---" % (time.time() - start_time))
-                    img_concate_Verti=np.concatenate((img_out1,img_out2),axis=0)
-                    cv2.imwrite("./output/"+patient+fileName+".png",img_concate_Verti)
-"""
+                    """img_concate_Verti=np.concatenate((img_out1,img_out2),axis=0)
+                    cv2.imwrite("./output/"+patient+fileName+".png",img_concate_Verti)"""
                     f, axarr = plt.subplots(3, 1)
                     axarr[0].imshow(img)
                     axarr[0].title.set_text("original image")
-                    axarr[1].imshow(img_out1)
+                    axarr[1].imshow(img_out1+img_seg)
                     axarr[1].title.set_text("first feature image")
-                    axarr[2].imshow(img_out2)
+                    axarr[2].imshow(img_out2+img_seg)
                     axarr[2].title.set_text("second feature image")
-                    plt.show()
-                    clustering_KNN(img, img_out1, img_out2)
-"""
+                    plt.savefig("./output/ii"+patient+fileName+".png") 
+                    #clustering_KNN(img, img_out1, img_out2)
 
 def tainingTest():
     model = load_model()
