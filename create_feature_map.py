@@ -18,6 +18,19 @@ from clustering import hieracjiclaClustering, clustering_KNN
 from os import listdir, mkdir
 from os.path import isfile, join, exists
 
+def readMask(filename, BaseDatasetFolderPathAurelien = "../v3_db/"):
+    nList = filename.split('_')
+    name = "_".join((nList[0],nList[2]))+ "_seg.png"
+    name = "".join(("../v3_db/", name))
+    img = cv2.imread(name, 0)
+    try:
+        if img == None:
+            return "", False
+    except: 
+        ret,thresh1 = cv2.threshold(img,127,255,cv2.THRESH_BINARY)
+        return thresh1, True
+
+
 def load_model(path='../model'):
     """This function load saved model for generate features map"""
     model = SiameseNet()
@@ -52,6 +65,35 @@ def features(image_ref_pad, model):
 
     return img_out_1, img_out_2
 
+def featuresWithMask(image_ref_pad, mask,model):
+    [size_x, size_y] = image_ref_pad.shape
+    print("The chape of input image",size_x, size_y)
+    
+    img_out_1 = image_ref_pad * 0
+    img_out_2 = image_ref_pad * 0
+    transform = transforms.Compose([
+    transforms.ToTensor(),
+    transforms.Normalize(mean=[0.485],
+                         std=[0.229])])
+    """
+    transforms.Normalize(mean=[0.485],
+                         std=[0.229])])"""
+
+    for i in range(16, size_x - 16):
+        for j in range(16, size_y - 16):
+            if mask[i,j] >= 250:
+                imagette_1 = image_ref_pad[i-16:i+16, j-16:j+16].copy()
+                imagette_1 = transform(imagette_1).unsqueeze(0)
+                out1 = model.forward_one(imagette_1)
+                out1 = out1.detach().numpy()
+                img_out_1[i,j] = out1[0][0]
+                img_out_2[i,j] = out1[0][1]
+            else:
+                img_out_1[i,j] = 0
+                img_out_2[i,j] = 0
+
+    return img_out_1, img_out_2
+
 def img_preprocessing(BaseDatasetFolderPath = "../data_base/", customDatasetFolderPath = "../data/", imgsize = 32):
     ##### Load Image #####
     model = load_model()
@@ -69,16 +111,9 @@ def img_preprocessing(BaseDatasetFolderPath = "../data_base/", customDatasetFold
                         fileName2 = fileName.replace("_val.","_seg.")
                     else :
                         fileName2 = fileName.split('.')[0] + "_seg." + fileName.split('.')[1]
+                    no = readMask(fileName)
                     img_seg = cv2.imread(join(BaseDatasetFolderPath, patient, fileName2), 0)
 
-                    img_seg = ~img_seg
-                    img_seg = (~(img_seg <= 15)*255).astype(np.uint8)
-                    img_seg = ~img_seg#.astype(np.uint8)
-                    """#img_seg = abs(img_seg - 255)
-                    plt.hist(img_seg.ravel(),256,[0,256]); 
-                    plt.show()
-                    cv2.imshow("qdfqs", img_seg)
-                    cv2.waitKey()"""
                     img_seg = img_seg[65:353, 203:747].copy()
 
                     print(BaseDatasetFolderPath+patient+'/'+fileName)
@@ -86,20 +121,27 @@ def img_preprocessing(BaseDatasetFolderPath = "../data_base/", customDatasetFold
                     ff = fileName.split('.')
                     img = img[65:353, 203:747].copy()
                     
-                    start_time = time.time()
                     print("Timer start")
-                    img_out1, img_out2 = features(img, model)
+                    start_time = time.time()
+                    
+                    if no[1] == True:
+                        n1 = cv2.resize(no[0], (544,288))
+                        img_out1, img_out2 = featuresWithMask(img, n1,model)
+                        img_out1 = np.multiply(img_out1,n1/256)
+                        img_out2 = np.multiply(img_out2,n1/256)
+                    else:
+                        img_out1, img_out2 = features(img, model)
                     print("--- %s seconds ---" % (time.time() - start_time))
-                    """img_concate_Verti=np.concatenate((img_out1,img_out2),axis=0)
-                    cv2.imwrite("./output/"+patient+fileName+".png",img_concate_Verti)"""
+                    
                     f, axarr = plt.subplots(3, 1)
                     axarr[0].imshow(img)
                     axarr[0].title.set_text("original image")
-                    axarr[1].imshow(img_out1+img_seg)
+                    axarr[1].imshow(img_out1)
                     axarr[1].title.set_text("first feature image")
-                    axarr[2].imshow(img_out2+img_seg)
+                    axarr[2].imshow(img_out2)
                     axarr[2].title.set_text("second feature image")
                     plt.savefig("./output/ii"+patient+fileName+".png") 
+                    plt.show()
                     #clustering_KNN(img, img_out1, img_out2)
 
 def tainingTest():
