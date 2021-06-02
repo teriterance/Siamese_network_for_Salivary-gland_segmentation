@@ -14,6 +14,7 @@ import time
 import sys
 import scipy.cluster.hierarchy as sch
 from clustering import hieracjiclaClustering, clustering_KNN
+import pydicom
 
 from os import listdir, mkdir
 from os.path import isfile, join, exists
@@ -102,19 +103,24 @@ def img_preprocessing(BaseDatasetFolderPath = "../data_base/", customDatasetFold
             pass
         else:
             for fileName in listdir(join(BaseDatasetFolderPath, patient)):
-                if not (".bmp" in fileName or ".jpg" in fileName and "_seg" not in fileName):
+                if not (".dcm" in fileName):
                     pass
-                elif (".bmp" in fileName or ".jpg" in fileName) and "_seg" not in fileName and "_Elas" not in fileName :
+                elif (".dcm" in fileName):
 
                     fileName2 = None
                     if "_val." in fileName:
                         fileName2 = fileName.replace("_val.","_seg.")
                     else :
-                        fileName2 = fileName.split('.')[0] + "_seg." + fileName.split('.')[1]
+                        fileName2 = fileName.split('.')[0] + "_seg.jpg"
                     no = readMask(fileName)
 
                     print(BaseDatasetFolderPath+patient+'/'+fileName)
-                    img  = cv2.imread(BaseDatasetFolderPath+patient+'/'+fileName, 0)
+                    #img  = cv2.imread(BaseDatasetFolderPath+patient+'/'+fileName, 0)
+                    ds = pydicom.dcmread(BaseDatasetFolderPath+patient+'/'+fileName)
+                    print(ds)
+                    img = ds.pixel_array
+                    img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+
                     ff = fileName.split('.')
                     img = img[65:353, 203:747].copy()
                     
@@ -137,7 +143,7 @@ def img_preprocessing(BaseDatasetFolderPath = "../data_base/", customDatasetFold
                         axarr[1].title.set_text("first feature image")
                         axarr[2].imshow(img_out2)
                         axarr[2].title.set_text("second feature image")
-                        plt.savefig("./output/ii"+patient+fileName+".png") 
+                        plt.savefig("./output/i1i"+patient+fileName+".png") 
                     else:
                         pass
                         #img_out1, img_out2 = features(img, model)

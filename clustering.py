@@ -33,8 +33,7 @@ def clustering_KNN(img, feature_1, feature_2):
     y_km = kmeans.fit_predict(X)
     print(y_km)
     img_clust = np.reshape(y_km, im_shape)
-    plt.imshow(img_clust)
-    plt.show()
+    return img_clust
 
 def clustering_DBSCAN(img, feature_1, feature_2):
     im_shape = img.shape
